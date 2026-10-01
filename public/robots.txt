@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vinhphannn.github.io/aegis-web/sitemap.xml
