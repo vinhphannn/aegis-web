@@ -17,6 +17,46 @@ export function Layout() {
         signalBootReady()
       })
     }
+
+    // Set up scroll reveal animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('rv-in')
+            observer.unobserve(e.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    )
+
+    // Observe existing
+    document.querySelectorAll('[data-rv]').forEach((el) => observer.observe(el))
+
+    // Catch elements rendered lazily via Suspense
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) { // ELEMENT_NODE
+            const el = node as HTMLElement
+            if (el.hasAttribute && el.hasAttribute('data-rv')) {
+              observer.observe(el)
+            }
+            if (el.querySelectorAll) {
+              el.querySelectorAll('[data-rv]').forEach((child) => observer.observe(child))
+            }
+          }
+        })
+      })
+    })
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      observer.disconnect()
+      mutationObserver.disconnect()
+    }
   }, [location.pathname])
 
   return (

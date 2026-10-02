@@ -60,3 +60,11 @@ npm test
 Browser tests use mock release data and never open a real USB port. They cover all five routes (direct access and refresh), hub navigation, back/forward, independent device selection, stable/beta releases, downloads, future module states, checksum failures, hardware confirmation and cancellation on navigation. Real USB flashing, progress/completion on hardware and data retention require a device test. CI uses Node from `.nvmrc` and runs build/tests on PRs; only `main` deploys.
 
 GitHub Pages has no SPA rewrites. `scripts/route-entries.mjs` copies the built entry HTML to existing route directories so direct links and refresh work; add a path there when adding a public route. The 3D home page is loaded only when visited, keeping it out of Configurator's initial download.
+
+## 3D Asset Attribution
+
+- **Model:** Vampire UAV (BabaYaga) (`public/models/aegis-drone.glb`)
+- **Author:** Karosio
+- **Source:** [Sketchfab — Vampire UAV (BabaYaga)](https://sketchfab.com/3d-models/vampire-uav-babayaga-f49e65781b32465c86841617e82fcae7)
+- **License:** [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- **Attribution Note:** "Vampire UAV (BabaYaga)" by Karosio is licensed under CC BY-NC-SA 4.0. Used for non-commercial, educational display purposes only.

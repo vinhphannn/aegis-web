@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { PageMeta } from '../components/PageMeta'
 import { HeroScene3D } from '../components/HeroScene3D'
+import { FcSectionScene3D } from '../components/FcSectionScene3D'
 
 export function HomePage() {
   return (
@@ -13,7 +14,6 @@ export function HomePage() {
 
       {/* SECTION A: HERO */}
       <section className="hero-section">
-        <div className="hero-bg-glow" />
         <div className="hero-content">
           <span className="hero-badge">AEGIS / SPATIAL ECOSYSTEM</span>
           <h1 className="hero-headline">
@@ -32,6 +32,7 @@ export function HomePage() {
           </div>
         </div>
         <div className="hero-visual">
+          <div className="hero-bg-glow" />
           <HeroScene3D desktopCameraZ={6.2} />
         </div>
       </section>
@@ -40,9 +41,9 @@ export function HomePage() {
 
       {/* SECTION B: ECOSYSTEM */}
       <section className="spatial-section">
-        <span className="section-meta">01 / ECOSYSTEM</span>
-        <h2 className="section-title">SYSTEM ARCHITECTURE</h2>
-        <div className="ecosystem-grid">
+        <span className="section-meta" data-rv="up">01 / ECOSYSTEM</span>
+        <h2 className="section-title" data-rv="up">SYSTEM ARCHITECTURE</h2>
+        <div className="ecosystem-grid" data-rv="up">
           <div className="system-flow">
             <div className="system-node">
               <span className="system-node-title">AEGIS TX</span>
@@ -71,10 +72,10 @@ export function HomePage() {
 
       {/* SECTION C: FLIGHT CONTROL */}
       <section className="spatial-section">
-        <span className="section-meta">02 / FLIGHT CONTROL</span>
-        <h2 className="section-title">AEGIS FC</h2>
+        <span className="section-meta" data-rv="up">02 / FLIGHT CONTROL</span>
+        <h2 className="section-title" data-rv="up">AEGIS FC</h2>
         <div className="asymmetric-block">
-          <div className="feature-info">
+          <div className="feature-info" data-rv="up">
             <p className="feature-description">
               Flight controller hardware engineered for autonomous platforms. Designed for multi-bus sensor integration, real-time telemetry, and flight-critical reliability.
             </p>
@@ -82,12 +83,8 @@ export function HomePage() {
               Explore AEGIS FC →
             </Link>
           </div>
-          <div className="feature-placeholder-visual">
-            <div className="spatial-visual-card">
-              <span className="spatial-card-badge">HARDWARE PLATFORM</span>
-              <h3 className="spatial-card-title">AEGIS FC v1</h3>
-              <p className="spatial-card-sub">Flight Controller Unit</p>
-            </div>
+          <div className="feature-placeholder-visual" data-rv="up">
+            <FcSectionScene3D />
           </div>
         </div>
       </section>
@@ -96,17 +93,17 @@ export function HomePage() {
 
       {/* SECTION D: CONTROL */}
       <section className="spatial-section">
-        <span className="section-meta">03 / CONTROL</span>
-        <h2 className="section-title">AEGIS TX</h2>
+        <span className="section-meta" data-rv="up">03 / CONTROL</span>
+        <h2 className="section-title" data-rv="up">AEGIS TX</h2>
         <div className="asymmetric-block reversed">
-          <div className="feature-placeholder-visual">
+          <div className="feature-placeholder-visual" data-rv="up">
             <div className="spatial-visual-card">
               <span className="spatial-card-badge">CONTROL LINK</span>
               <h3 className="spatial-card-title">AEGIS TX</h3>
               <p className="spatial-card-sub">RC Transmitter & Flasher</p>
             </div>
           </div>
-          <div className="feature-info">
+          <div className="feature-info" data-rv="up">
             <p className="feature-description">
               Radio transmitter platform built for long-range command, low-latency control link, and integrated system diagnostics.
             </p>
@@ -121,9 +118,9 @@ export function HomePage() {
 
       {/* SECTION E: CONFIGURATOR */}
       <section className="spatial-section">
-        <span className="section-meta">04 / CONFIGURATOR</span>
-        <h2 className="section-title">AEGIS WEB TOOLS</h2>
-        <div className="feature-info">
+        <span className="section-meta" data-rv="up">04 / CONFIGURATOR</span>
+        <h2 className="section-title" data-rv="up">AEGIS WEB TOOLS</h2>
+        <div className="feature-info" data-rv="up">
           <p className="feature-description">
             Web-based platform designed for device configuration, parameter adjustment, and firmware utility operations.
           </p>
@@ -137,9 +134,9 @@ export function HomePage() {
 
       {/* SECTION F: ENGINEERING */}
       <section className="spatial-section">
-        <span className="section-meta">05 / ENGINEERING</span>
-        <h2 className="section-title">CORE ARCHITECTURE</h2>
-        <div className="engineering-flow">
+        <span className="section-meta" data-rv="up">05 / ENGINEERING</span>
+        <h2 className="section-title" data-rv="up">CORE ARCHITECTURE</h2>
+        <div className="engineering-flow" data-rv="up">
           <div className="engineering-column">
             <h3>Hardware</h3>
             <p>Embedded systems designed for reliability and sensor integration.</p>
@@ -159,9 +156,9 @@ export function HomePage() {
 
       {/* SECTION G: ABOUT */}
       <section className="spatial-section">
-        <span className="section-meta">06 / ABOUT</span>
-        <h2 className="section-title">ENGINEERING ECOSYSTEM</h2>
-        <div className="about-block">
+        <span className="section-meta" data-rv="up">06 / ABOUT</span>
+        <h2 className="section-title" data-rv="up">ENGINEERING ECOSYSTEM</h2>
+        <div className="about-block" data-rv="up">
           <p>
             AEGIS is an open UAV hardware and software engineering project focused on building reliable, modular components for modern autonomous flight systems.
           </p>
