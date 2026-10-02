@@ -1,0 +1,160 @@
+.configurator {
+  max-width: 960px;
+}
+
+.config-panel {
+  padding: 1.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-subtle);
+}
+
+.config-fields {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.config-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.config-fields select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--bg-color);
+}
+
+.configurator button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.configurator button.btn-primary {
+  border: 1px solid transparent;
+}
+
+.configurator button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+
+.configurator :focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 4px;
+}
+
+.config-empty, .config-release, .config-install, .config-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.config-empty, .config-release {
+  padding-top: 1.75rem;
+  margin-top: 1.75rem;
+  border-top: 1px solid var(--border-subtle);
+  align-items: flex-start;
+}
+
+.configurator h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.config-release-header, .config-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+}
+
+.config-release-header span, .config-status, .config-empty p, .config-guide {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.config-release-header .text-link {
+  margin-left: auto;
+}
+
+.config-panel > .config-status {
+  margin-top: 1.25rem;
+}
+
+.config-notice {
+  padding-left: 1rem;
+  border-left: 2px solid var(--accent-blue);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.config-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.config-check input {
+  margin-top: 0.3rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  accent-color: var(--accent-blue);
+}
+
+.config-guide h2 {
+  color: var(--text-primary);
+}
+
+.config-guide ol {
+  padding-left: 1.25rem;
+}
+
+.config-guide li + li {
+  margin-top: 0.5rem;
+}
+
+.config-checksum {
+  width: 100%;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.config-checksum summary {
+  cursor: pointer;
+  margin-bottom: 0.6rem;
+}
+
+.config-checksum code {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .config-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .config-panel {
+    padding: 1.25rem;
+  }
+
+  .config-release-header .text-link {
+    margin-left: 0;
+  }
+}

@@ -1,6 +1,6 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout'
-import { HomePage } from './pages/HomePage'
 import { ProductsPage } from './pages/ProductsPage'
 import { AegisFcPage } from './pages/AegisFcPage'
 import { AegisTxPage } from './pages/AegisTxPage'
@@ -12,12 +12,14 @@ import { AboutPage } from './pages/AboutPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import './App.css'
 
+const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default: module.HomePage })))
+
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
+          <Route index element={<Suspense fallback={<div className="page-container">Loading…</div>}><HomePage /></Suspense>} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/aegis-fc" element={<AegisFcPage />} />
           <Route path="products/aegis-tx" element={<AegisTxPage />} />
