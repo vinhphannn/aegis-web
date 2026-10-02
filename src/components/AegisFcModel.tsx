@@ -1,12 +1,28 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
+import { signalBootReady } from '../lib/boot'
 
 // Construct model URL using Vite BASE_URL for deep-link / subpath safety
 const MODEL_URL = `${import.meta.env.BASE_URL}models/aegis-fc.glb`
 
 export function AegisFcModel({ isDesktop = true }: { isDesktop?: boolean }) {
   const { scene } = useGLTF(MODEL_URL)
+
+  // First frame safety: signal boot readiness after WebGL has rendered the first frame
+  useEffect(() => {
+    let raf1: number
+    let raf2: number
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        signalBootReady()
+      })
+    })
+    return () => {
+      cancelAnimationFrame(raf1)
+      cancelAnimationFrame(raf2)
+    }
+  }, [])
 
   // Calculate centering and scale from bounding box ONCE after load
   const { scaleFactor, centerOffset } = useMemo(() => {

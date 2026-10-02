@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { prefetchPath } from '../lib/prefetch'
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -12,10 +13,21 @@ export function Navbar() {
     setMobileMenuOpen(false)
   }
 
+  const handlePrefetch = (path: string) => {
+    prefetchPath(path)
+  }
+
   return (
     <header className="navbar">
       <div className="nav-container">
-        <Link to="/" className="brand" onClick={closeMobileMenu}>
+        <Link
+          to="/"
+          className="brand"
+          onClick={closeMobileMenu}
+          onPointerEnter={() => handlePrefetch('/')}
+          onFocus={() => handlePrefetch('/')}
+          onTouchStart={() => handlePrefetch('/')}
+        >
           AEGIS
         </Link>
 
@@ -24,24 +36,36 @@ export function Navbar() {
           <NavLink
             to="/products"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onPointerEnter={() => handlePrefetch('/products')}
+            onFocus={() => handlePrefetch('/products')}
+            onTouchStart={() => handlePrefetch('/products')}
           >
             Products
           </NavLink>
           <NavLink
             to="/configurator"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onPointerEnter={() => handlePrefetch('/configurator')}
+            onFocus={() => handlePrefetch('/configurator')}
+            onTouchStart={() => handlePrefetch('/configurator')}
           >
             Configurator
           </NavLink>
           <NavLink
             to="/docs"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onPointerEnter={() => handlePrefetch('/docs')}
+            onFocus={() => handlePrefetch('/docs')}
+            onTouchStart={() => handlePrefetch('/docs')}
           >
             Docs
           </NavLink>
           <NavLink
             to="/about"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onPointerEnter={() => handlePrefetch('/about')}
+            onFocus={() => handlePrefetch('/about')}
+            onTouchStart={() => handlePrefetch('/about')}
           >
             About
           </NavLink>
@@ -73,6 +97,9 @@ export function Navbar() {
             to="/products"
             className={({ isActive }) => (isActive ? 'mobile-link active' : 'mobile-link')}
             onClick={closeMobileMenu}
+            onPointerEnter={() => handlePrefetch('/products')}
+            onFocus={() => handlePrefetch('/products')}
+            onTouchStart={() => handlePrefetch('/products')}
           >
             Products
           </NavLink>
@@ -80,6 +107,9 @@ export function Navbar() {
             to="/configurator"
             className={({ isActive }) => (isActive ? 'mobile-link active' : 'mobile-link')}
             onClick={closeMobileMenu}
+            onPointerEnter={() => handlePrefetch('/configurator')}
+            onFocus={() => handlePrefetch('/configurator')}
+            onTouchStart={() => handlePrefetch('/configurator')}
           >
             Configurator
           </NavLink>
@@ -87,6 +117,9 @@ export function Navbar() {
             to="/docs"
             className={({ isActive }) => (isActive ? 'mobile-link active' : 'mobile-link')}
             onClick={closeMobileMenu}
+            onPointerEnter={() => handlePrefetch('/docs')}
+            onFocus={() => handlePrefetch('/docs')}
+            onTouchStart={() => handlePrefetch('/docs')}
           >
             Docs
           </NavLink>
@@ -94,6 +127,9 @@ export function Navbar() {
             to="/about"
             className={({ isActive }) => (isActive ? 'mobile-link active' : 'mobile-link')}
             onClick={closeMobileMenu}
+            onPointerEnter={() => handlePrefetch('/about')}
+            onFocus={() => handlePrefetch('/about')}
+            onTouchStart={() => handlePrefetch('/about')}
           >
             About
           </NavLink>

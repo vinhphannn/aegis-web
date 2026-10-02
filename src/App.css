@@ -812,9 +812,99 @@
   .spatial-canvas-wrapper {
     height: 300px;
   }
+}
 
-  .feature-placeholder-visual {
-    height: 280px;
+/* Boot Loader & Route Fallback */
+.boot-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.boot-loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.boot-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.boot-brand {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: var(--text-primary);
+}
+
+.boot-status {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-blue);
+}
+
+.boot-line {
+  width: 120px;
+  height: 2px;
+  background: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  transform-origin: center;
+  animation: boot-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes boot-pulse {
+  0% { transform: scaleX(0.2); opacity: 0.4; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+.route-fallback {
+  width: 100%;
+  min-height: 40vh;
+  position: relative;
+}
+
+.route-fallback-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  transform-origin: left;
+  animation: route-fallback-pulse 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes route-fallback-pulse {
+  0% { transform: scaleX(0.1); opacity: 0.3; }
+  50% { transform: scaleX(0.7); opacity: 0.8; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-loader {
+    transition: opacity 0.1s ease;
+  }
+  .boot-line {
+    animation: none;
+    transform: scaleX(1);
+  }
+  .route-fallback-line {
+    animation: none;
+    transform: scaleX(1);
+    opacity: 0.5;
   }
 }
 
