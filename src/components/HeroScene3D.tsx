@@ -1,7 +1,6 @@
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState, type ComponentRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { PerspectiveCamera } from 'three'
 import { AegisFcModel } from './AegisFcModel'
 
@@ -14,7 +13,7 @@ export function HeroScene3D({ desktopCameraZ = 4.2 }: HeroScene3DProps) {
   const [isDesktop, setIsDesktop] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.innerWidth > 768 : true
   )
-  const controlsRef = useRef<OrbitControlsImpl>(null)
+  const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null)
 
   useEffect(() => {
     const checkViewport = () => {

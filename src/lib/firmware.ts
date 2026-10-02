@@ -1,5 +1,5 @@
 // Firmware stays with its release pipeline; this app owns only the installer UI.
-export const FIRMWARE_BASE_URL = 'https://vinhphannn.github.io/Aegis-TX/'
+const FIRMWARE_BASE_URL = 'https://vinhphannn.github.io/Aegis-TX/'
 export type Channel = 'stable' | 'beta'
 
 export interface Release {
@@ -17,7 +17,7 @@ export interface ControllerRelease extends Release {
   metadata: string
   manifest: string
 }
-export interface FcRelease extends Release {
+interface FcRelease extends Release {
   board_id: 1179
   sha256: string
 }

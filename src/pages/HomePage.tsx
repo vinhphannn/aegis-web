@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { PageMeta } from '../components/PageMeta'
-import { TestCanvas3D } from '../components/TestCanvas3D'
 import { HeroScene3D } from '../components/HeroScene3D'
 
 export function HomePage() {
@@ -84,7 +83,11 @@ export function HomePage() {
             </Link>
           </div>
           <div className="feature-placeholder-visual">
-            <HeroScene3D desktopCameraZ={6.5} />
+            <div className="spatial-visual-card">
+              <span className="spatial-card-badge">HARDWARE PLATFORM</span>
+              <h3 className="spatial-card-title">AEGIS FC v1</h3>
+              <p className="spatial-card-sub">Flight Controller Unit</p>
+            </div>
           </div>
         </div>
       </section>
@@ -97,7 +100,11 @@ export function HomePage() {
         <h2 className="section-title">AEGIS TX</h2>
         <div className="asymmetric-block reversed">
           <div className="feature-placeholder-visual">
-            <TestCanvas3D />
+            <div className="spatial-visual-card">
+              <span className="spatial-card-badge">CONTROL LINK</span>
+              <h3 className="spatial-card-title">AEGIS TX</h3>
+              <p className="spatial-card-sub">RC Transmitter & Flasher</p>
+            </div>
           </div>
           <div className="feature-info">
             <p className="feature-description">
