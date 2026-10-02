@@ -11,7 +11,7 @@
 
 .config-fields {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
 
@@ -157,4 +157,44 @@
   .config-release-header .text-link {
     margin-left: 0;
   }
+}
+
+.config-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.config-devices {
+  list-style: none;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.config-devices a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.config-devices a > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.config-devices strong {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.config-devices a:hover strong {
+  color: var(--accent-blue);
 }

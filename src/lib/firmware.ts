@@ -2,14 +2,14 @@
 export const FIRMWARE_BASE_URL = 'https://vinhphannn.github.io/Aegis-TX/'
 export type Channel = 'stable' | 'beta'
 
-interface Release {
+export interface Release {
   version: string
   channel: Channel
   published_at: string
   release_url: string
   download: string
 }
-export interface TxRelease extends Release {
+export interface ControllerRelease extends Release {
   board: 'aegis-tx-esp32'
   hardware_revision: 'tx01'
   commit: string
@@ -23,7 +23,7 @@ export interface FcRelease extends Release {
 }
 export interface Catalog {
   schema_version: 1
-  tx: TxRelease[]
+  controller: ControllerRelease[]
   fc: FcRelease[]
 }
 interface Metadata {
@@ -62,7 +62,9 @@ async function get(url: string, signal: AbortSignal) {
 }
 
 export async function loadCatalog(signal: AbortSignal): Promise<Catalog> {
-  const catalog: Catalog = await (await get(firmwareURL('catalog.json'), signal)).json()
+  // The publisher uses the historical `tx` key for the handheld controller.
+  // Normalize that wire format here; UI device roles use `controller`.
+  const catalog: { schema_version: 1; tx: ControllerRelease[]; fc: FcRelease[] } = await (await get(firmwareURL('catalog.json'), signal)).json()
   if (catalog.schema_version !== 1 || !Array.isArray(catalog.tx) || !Array.isArray(catalog.fc)) {
     throw new Error('Unsupported firmware catalog.')
   }
@@ -89,10 +91,10 @@ export async function loadCatalog(signal: AbortSignal): Promise<Catalog> {
       throw new Error('Unsupported FC firmware.')
     }
   }
-  return catalog
+  return { schema_version: 1, controller: catalog.tx, fc: catalog.fc }
 }
 
-export async function prepareFirmware(release: TxRelease, signal: AbortSignal): Promise<PreparedFirmware> {
+export async function prepareFirmware(release: ControllerRelease, signal: AbortSignal): Promise<PreparedFirmware> {
   const blobs: string[] = []
   const dispose = () => blobs.forEach(url => URL.revokeObjectURL(url))
   try {
