@@ -14,8 +14,8 @@ export function HomePage() {
         <img className="home-studio-backdrop" src={`${import.meta.env.BASE_URL}images/about/flight-lab.webp`} alt="" aria-hidden="true" draggable={false} />
         <div className="hero-content">
           <span className="hero-badge">AEGIS / UAV SYSTEMS</span>
-          <h1 className="hero-headline">Flight control, operator control, and autonomy — built as one system.</h1>
-          <p className="hero-subhead">Hardware and software for autonomous UAV systems. Custom electronics, embedded firmware, and practical tools for getting started.</p>
+          <h1 className="hero-headline">Integrated systems for autonomous flight.</h1>
+          <p className="hero-subhead">Flight controllers, handheld controllers, and firmware tools for UAVs.</p>
           <div className="hero-actions">
             <Link to="/products" className="btn-primary">Explore Hardware</Link>
             <Link to="/configurator" className="btn-secondary">Open Configurator</Link>

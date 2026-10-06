@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test('Home provides three sections and routes to current hardware', async ({ page }) => {
   await page.goto('./')
-  await expect(page.getByRole('heading', { name: 'Flight control, operator control, and autonomy — built as one system.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Integrated systems for autonomous flight.' })).toBeVisible()
   await expect(page.locator('.home-container > section')).toHaveCount(3)
   await expect(page.getByText('WORKING PROTOTYPE', { exact: true })).toHaveCount(2)
   await expect(page.getByRole('link', { name: 'Open Configurator', exact: true })).toHaveAttribute('href', '/aegis-web/configurator')
