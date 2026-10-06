@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { PageMeta } from '../components/PageMeta'
 import { HeroScene3D } from '../components/HeroScene3D'
@@ -5,10 +6,12 @@ import { hardware } from '../content/hardware'
 import './HardwarePages.css'
 
 export function HomePage() {
+  const heroRef = useRef<HTMLElement>(null)
   return (
     <div className="home-container home-hub">
       <PageMeta title="UAV systems" description="AEGIS flight controller hardware, handheld operator control, and firmware tools for UAV systems." path="/" />
-      <section className="hero-section">
+      <section ref={heroRef} className="hero-section home-studio-hero">
+        <img className="home-studio-backdrop" src={`${import.meta.env.BASE_URL}images/about/flight-lab.webp`} alt="" aria-hidden="true" draggable={false} />
         <div className="hero-content">
           <span className="hero-badge">AEGIS / UAV SYSTEMS</span>
           <h1 className="hero-headline">Flight control, operator control, and autonomy — built as one system.</h1>
@@ -19,8 +22,7 @@ export function HomePage() {
           </div>
         </div>
         <div className="hero-visual">
-          <div className="hero-bg-glow" />
-          <HeroScene3D />
+          <HeroScene3D eventRoot={heroRef} />
           <span className="home-visual-caption">AEGIS FC / drag to rotate</span>
         </div>
       </section>

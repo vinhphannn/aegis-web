@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test'
 
 test('only chapter 3 FC rotates on drag and keeps its angle after release', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 1440, height: 1000 })
   await page.goto('about/')
   await expect(page.locator('.about-model-parallax')).toHaveAttribute('data-models-ready', 'true', { timeout: 30000 })
   await page.getByRole('button', { name: '3. The ecosystem' }).click()
   await expect(page.locator('.aegis-about')).toHaveAttribute('data-chapter', '3')
   await expect.poll(() => page.locator('#about-foundations').evaluate(el => Math.abs(el.getBoundingClientRect().top))).toBeLessThan(2)
-  const isolated = await page.addStyleTag({ content: '.about-scene-world, .about-chapter-content, .about-chapter-rail, .aegis-nav, .about-fc-drag-hint { visibility: hidden !important; }' })
+  const isolated = await page.addStyleTag({ content: '.about-scene-world, .about-chapter-content, .about-chapter-rail, .aegis-nav, .about-fc-drag-hint { visibility: hidden !important; } .about-model-parallax { transform: none !important; }' })
   await page.waitForTimeout(1000)
   const canvas = page.locator('.about-near-plane canvas')
   const snapshot = async () => (await canvas.screenshot()).toString('base64')
@@ -22,6 +23,14 @@ test('only chapter 3 FC rotates on drag and keeps its angle after release', asyn
     for (let i = 0; i < pixels[0].length; i += 4) if (Math.abs(pixels[0][i] - pixels[1][i]) + Math.abs(pixels[0][i + 1] - pixels[1][i + 1]) + Math.abs(pixels[0][i + 2] - pixels[1][i + 2]) > 24) changed++
     return changed / (output.width * output.height)
   }, [a, b])
+  let previous = await snapshot()
+  await expect.poll(async () => {
+    await page.waitForTimeout(200)
+    const current = await snapshot()
+    const changed = await difference(previous, current)
+    previous = current
+    return changed
+  }, { timeout: 15000 }).toBeLessThan(.0001)
   const before = await snapshot()
   await page.mouse.move(1080, 550)
   await page.waitForTimeout(500)

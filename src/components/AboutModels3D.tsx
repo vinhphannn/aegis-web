@@ -33,13 +33,16 @@ class ModelBoundary extends Component<{ children: ReactNode; onUnavailable: () =
   render() { return this.state.failed ? null : this.props.children }
 }
 
-function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: number; reduced: boolean; onReady: (kind: ModelKind) => void }) {
+export function Model({ kind, chapter, reduced, onReady, hero = false }: { kind: ModelKind; chapter: number; reduced: boolean; onReady: (kind: ModelKind) => void; hero?: boolean }) {
   const { scene } = useGLTF(`${modelRoot}aegis-${kind}.glb`)
   const { viewport, invalidate } = useThree()
   const group = useRef<Group>(null)
   const firstFrame = useRef(false)
   const readyFrame = useRef(0)
   const dragRotation = useRef(new Quaternion())
+  const idlePauseUntil = useRef(0)
+  const idleStep = useMemo(() => new Quaternion(), [])
+  const idleAxis = useMemo(() => new Euler(0, 0, 0), [])
   const drag = useRef<{ id: number; x: number; y: number; target: { releasePointerCapture: (id: number) => void } } | null>(null)
   const pointer = useRef({ x: 0, y: 0 })
   const targetRotation = useMemo(() => new Quaternion(), [])
@@ -49,7 +52,7 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
     return prepareModel(scene, kind === 'fc')
   }, [scene, kind])
 
-  useEffect(() => () => normalized.owned.forEach(geometry => geometry.dispose()), [normalized])
+  useEffect(() => () => { normalized.owned.forEach(geometry => geometry.dispose()); normalized.ownedMaterials.forEach(material => material.dispose()) }, [normalized])
   useEffect(() => { invalidate(); return () => cancelAnimationFrame(readyFrame.current) }, [invalidate])
   useEffect(() => {
     const media = window.matchMedia('(hover: hover) and (pointer: fine)')
@@ -69,6 +72,7 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
   }, [reduced, invalidate])
   useEffect(() => {
     dragRotation.current.identity()
+    idlePauseUntil.current = performance.now() + 1200
     drag.current?.target.releasePointerCapture(drag.current.id)
     drag.current = null
     invalidate()
@@ -80,10 +84,12 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
       drag.current = null
       if (current) { try { current.target.releasePointerCapture(current.id) } catch { /* Already released by the browser. */ } }
     }
+    const visibility = () => { idlePauseUntil.current = performance.now() + 1200; invalidate() }
+    document.addEventListener('visibilitychange', visibility)
     window.addEventListener('blur', cancel)
     window.addEventListener('pointercancel', cancel)
-    return () => { cancel(); window.removeEventListener('blur', cancel); window.removeEventListener('pointercancel', cancel) }
-  }, [])
+    return () => { cancel(); document.removeEventListener('visibilitychange', visibility); window.removeEventListener('blur', cancel); window.removeEventListener('pointercancel', cancel) }
+  }, [invalidate])
 
   const startDrag = (event: ThreeEvent<PointerEvent>) => {
     if (kind !== 'fc' || chapter !== 2 || event.button !== 0) return
@@ -92,6 +98,7 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
     window.getSelection()?.removeAllRanges()
     const target = event.target as unknown as { setPointerCapture: (id: number) => void; releasePointerCapture: (id: number) => void }
     target.setPointerCapture(event.pointerId)
+    idlePauseUntil.current = performance.now() + 2500
     drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, target }
   }
   const rotateDrag = (event: ThreeEvent<PointerEvent>) => {
@@ -110,6 +117,8 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
     event.stopPropagation()
     drag.current.target.releasePointerCapture(event.pointerId)
     drag.current = null
+    idlePauseUntil.current = performance.now() + 2500
+    invalidate()
   }
 
   useFrame((_, delta) => {
@@ -122,15 +131,24 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
     const width = kind === 'drone'
       ? viewport.width * (mobile ? .82 : .46)
       : viewport.width * (featured ? (mobile ? .6 : .34) : (mobile ? .42 : .2))
-    const x = viewport.width * (kind === 'drone' ? ABOUT_DRONE.positionX + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetX : 0) : featured ? (mobile ? .30 : .24) : -.44)
+    const x = hero && mobile ? 0 : viewport.width * (kind === 'drone' ? ABOUT_DRONE.positionX + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetX : 0) : featured ? (mobile ? .30 : .24) : -.44)
     const y = viewport.height * (kind === 'drone' ? ABOUT_DRONE.positionY + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetY : 0) : featured ? (mobile ? -.32 : -.04) : -.46)
-    const scale = kind === 'drone' && !showDrone ? 0 : Math.min(width, kind === 'drone' ? 6.8 : 6) * (chapterTwoDrone ? CHAPTER_TWO_DRONE.scaleMultiplier : 1)
+    const baseScale = kind === 'drone' && !showDrone ? 0 : Math.min(width, kind === 'drone' ? 6.8 : 6) * (chapterTwoDrone ? CHAPTER_TWO_DRONE.scaleMultiplier : 1)
+    // Reserve enough room for the board's bounding sphere at any drag angle.
+    const scale = hero ? Math.min(baseScale, (viewport.width / 2 - Math.abs(x)) * .95 / normalized.radius, (viewport.height / 2 - Math.abs(y)) * .95 / normalized.radius) : baseScale
     const pointerStrength = kind === 'drone' ? ABOUT_DRONE.pointerStrength : featured ? 0 : 1
     const angle = new Euler(
       (kind === 'drone' ? MathUtils.degToRad(ABOUT_DRONE.tiltX) : .65) - pointer.current.y * .1 * pointerStrength,
       (kind === 'drone' ? MathUtils.degToRad(ABOUT_DRONE.yawY + chapter * ABOUT_DRONE.chapterYaw) : -.35 + (chapter - 1) * .04) + pointer.current.x * .16 * pointerStrength,
       (kind === 'drone' ? MathUtils.degToRad(ABOUT_DRONE.rollZ) : .2) + pointer.current.x * .025 * pointerStrength,
     )
+    // Gentle world-axis turn; manual dragging takes priority and resumes without a reset.
+    const autoRotate = featured && !reduced && !document.hidden
+    if (autoRotate && !drag.current && performance.now() > idlePauseUntil.current) {
+      idleAxis.set(0, Math.min(delta, .05) * .12, 0)
+      idleStep.setFromEuler(idleAxis)
+      dragRotation.current.premultiply(idleStep)
+    }
     targetRotation.setFromEuler(angle)
     if (featured) targetRotation.premultiply(dragRotation.current)
     const initial = !firstFrame.current
@@ -145,7 +163,7 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
       readyFrame.current = requestAnimationFrame(() => onReady(kind))
     }
     const pending = Math.abs(object.position.x - x) + Math.abs(object.position.y - y) + Math.abs(object.scale.x - scale) + object.quaternion.angleTo(targetRotation)
-    if (pending > .002) invalidate()
+    if (autoRotate || pending > .002) invalidate()
     else if (featured) {
       object.position.set(x, y, 0)
       object.scale.setScalar(scale)
