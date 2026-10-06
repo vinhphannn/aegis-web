@@ -85,7 +85,6 @@ html.about-scene-scroll .footer { scroll-snap-align: end; position: relative; z-
 .aegis-about[data-timed-out="true"] .about-model-parallax { transition: opacity .6s ease; }
 .about-model-parallax[data-models-ready="true"] { opacity: 1; }
 .about-loading { position: fixed; inset: 0; z-index: 900; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: var(--bg-color); color: var(--text-secondary); font: 11px var(--font-mono); letter-spacing: .12em; }
-.about-loading-brand { color: var(--text-primary); font-size: 22px; letter-spacing: .3em; }
 .about-loading i { width: 110px; height: 1px; background: var(--border-hover); position: relative; overflow: hidden; }
 .about-loading i::after { content: ''; position: absolute; inset: 0; background: var(--accent-blue); animation: about-loading-line 1.3s ease-in-out infinite; }
 @keyframes about-loading-line { from { transform: translateX(-100%); } to { transform: translateX(100%); } }

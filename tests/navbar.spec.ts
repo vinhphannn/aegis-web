@@ -41,7 +41,7 @@ test('mobile sheet opens from a hidden navbar and closes with keyboard or naviga
   expect(await page.locator('.main-content').evaluate(el => (el as HTMLElement).inert)).toBe(true)
   await toggle.focus()
   await page.keyboard.press('Tab')
-  await expect(page.getByRole('link', { name: 'AEGIS home' })).toBeFocused()
+  await expect(page.getByRole('banner').getByRole('link', { name: 'AEGIS home' })).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
   await expect(toggle).toBeFocused()

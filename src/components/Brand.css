@@ -1,0 +1,10 @@
+.aegis-brand { display: block; object-fit: contain; max-width: 100%; height: auto; }
+.aegis-brand-lockup { width: 200px; }
+.aegis-brand-symbol { width: 42px; }
+.aegis-nav-brand .aegis-brand-lockup { width: 200px; height: auto; }
+.boot-logo, .about-loading .aegis-brand-lockup { width: 260px; }
+.footer-brand .aegis-brand-lockup { width: 180px; }
+@media (max-width: 700px) {
+  .aegis-nav-brand .aegis-brand-lockup { width: 176px; }
+  .boot-logo, .about-loading .aegis-brand-lockup { width: 230px; }
+}

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Brand } from '../components/Brand'
 import { PageMeta } from '../components/PageMeta'
 import './AboutPage.css'
 
@@ -138,7 +139,7 @@ export function AboutPage() {
 
   return (
     <>
-    {!revealed && <div className="about-loading" role="status" aria-live="polite"><span className="about-loading-brand">AEGIS</span><span>Preparing the scene</span><i aria-hidden="true" /></div>}
+    {!revealed && <div className="about-loading" role="status" aria-live="polite"><Brand /><span>Preparing the scene</span><i aria-hidden="true" /></div>}
     <div ref={rootRef} className="aegis-about" data-chapter={active + 1} data-prepared={revealed} data-timed-out={timedOut} aria-busy={!revealed}>
       <PageMeta title="About AEGIS" description="An open UAV engineering project connecting modular hardware, embedded firmware, and practical browser tools." path="/about" />
       <div className="about-scene-world" aria-hidden="true">

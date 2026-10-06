@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { prefetchPath } from '../lib/prefetch'
 import './Navbar.css'
+import { Brand } from './Brand'
 
 const items = [
   { to: '/products', label: 'Products', detail: 'Hardware' },
@@ -28,7 +29,7 @@ export function Navbar() {
       setHidden(!open && !headerRef.current?.contains(document.activeElement) && y > last + 4 && y > window.innerHeight * .8)
       last = y
     }
-    const onResize = () => { if (window.innerWidth > 820) setOpen(false) }
+    const onResize = () => { if (window.innerWidth > 1000) setOpen(false) }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize, { passive: true })
@@ -65,8 +66,7 @@ export function Navbar() {
   return (
     <header ref={headerRef} className={`aegis-nav${stuck ? ' stuck' : ''}${hidden && !open ? ' hide' : ''}${open ? ' menu-open' : ''}`} onFocusCapture={() => setHidden(false)}>
       <Link to="/" className="aegis-nav-brand" aria-label="AEGIS home" onClick={close} onPointerEnter={() => prefetchPath('/')} onFocus={() => prefetchPath('/')}>
-        <img src={`${import.meta.env.BASE_URL}favicon.svg`} width="34" height="34" alt="" />
-        <span className="aegis-nav-wordmark"><b>AEGIS</b><i>UAV ECOSYSTEM</i></span>
+        <Brand alt="" />
       </Link>
       <div className="aegis-nav-shade" onClick={close} aria-hidden="true" />
       <nav className="aegis-nav-links" id="aegis-nav-links" aria-label="Main navigation">

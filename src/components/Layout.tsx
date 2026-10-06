@@ -1,5 +1,6 @@
 import { useEffect, Suspense } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Brand } from './Brand'
 import { Navbar } from './Navbar'
 import { RouteFallback } from './RouteFallback'
 import { scheduleIdlePrefetch, prefetchPath } from '../lib/prefetch'
@@ -71,7 +72,7 @@ export function Layout() {
 
       <footer className="footer">
         <div className="footer-content">
-          <span>AEGIS UAV Ecosystem</span>
+          <Link to="/" className="footer-brand" aria-label="AEGIS home"><Brand alt="" /></Link>
           <div className="footer-nav">
             <Link
               to="/products"

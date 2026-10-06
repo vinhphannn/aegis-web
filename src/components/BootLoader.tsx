@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Brand } from './Brand'
 import { onBootReady } from '../lib/boot'
 
 const MIN_BOOT_TIME = 250 // Anti-flicker minimum (250ms)
@@ -59,7 +60,7 @@ export function BootLoader() {
       aria-hidden="true"
     >
       <div className="boot-content">
-        <span className="boot-brand">AEGIS</span>
+        <Brand className="boot-logo" />
         <span className="boot-status">SYSTEM INITIALIZING</span>
         <div className="boot-line" />
       </div>
