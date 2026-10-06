@@ -7,108 +7,6 @@
   position: relative;
 }
 
-/* Floating Navigation Bar */
-.navbar-wrapper {
-  position: fixed;
-  top: 1rem;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  padding: 0 1rem;
-}
-
-.navbar {
-  width: fit-content;
-  min-width: 640px;
-  max-width: 860px;
-  background-color: var(--surface-floating);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 1rem 1.75rem;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.brand {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  text-decoration: none;
-  letter-spacing: 0.14em;
-  font-family: var(--font-mono);
-}
-
-.desktop-nav {
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-}
-
-.nav-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.92rem;
-  font-weight: 600;
-  transition: color 0.15s ease;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: var(--text-primary);
-}
-
-.nav-link.external {
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-}
-
-.nav-link.external:hover {
-  color: var(--accent-blue);
-}
-
-.mobile-menu-btn {
-  display: none;
-  background: none;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
-  font-size: 1rem;
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.mobile-nav {
-  display: flex;
-  flex-direction: column;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border-subtle);
-  gap: 0.6rem;
-}
-
-.mobile-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  padding: 0.4rem 0.5rem;
-  border-radius: 6px;
-}
-
-.mobile-link.active,
-.mobile-link:hover {
-  color: var(--text-primary);
-}
-
 /* Main Container */
 .main-content {
   flex: 1;
@@ -645,20 +543,6 @@
 }
 
 @media (max-width: 768px) {
-  .desktop-nav {
-    display: none;
-  }
-
-  .mobile-menu-btn {
-    display: block;
-  }
-
-  .navbar {
-    min-width: 0;
-    width: 100%;
-    border-radius: 10px;
-  }
-
   .hero-section {
     grid-template-columns: 1fr;
     min-height: auto;

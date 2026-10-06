@@ -4,7 +4,7 @@ import { DevicePage } from './DevicePage'
 import { FirmwareSelection } from './FirmwareSelection'
 
 export function ControllerConfiguratorPage() {
-  return <DevicePage name="AEGIS Controller" path="controller" description="Select firmware for your AEGIS TX handheld controller and install over USB.">
+  return <DevicePage name="AEGIS Controller" path="controller" description="Select firmware for your AEGIS handheld Controller and install over USB.">
     <FirmwareSelection source={controllerSource} emptyMessage="Only releases prepared for web installation appear here. Older releases remain available on GitHub.">
       {release => <>
         <p className="config-status">{release.hardware_tested ? 'Hardware testing confirmed by the publisher.' : 'Hardware testing has not been confirmed for this release.'}</p>

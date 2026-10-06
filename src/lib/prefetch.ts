@@ -37,15 +37,15 @@ export function prefetchPath(path: string) {
 
   if (path === '/') loader = loaders.home
   else if (path === '/products') loader = loaders.products
-  else if (path === '/products/aegis-fc') loader = loaders.aegisFcProduct
-  else if (path === '/products/aegis-tx') loader = loaders.aegisTxProduct
+  else if ((path === '/products/aegis-fc' || path === '/products/fc')) loader = loaders.aegisFcProduct
+  else if ((path === '/products/aegis-tx' || path === '/products/controller')) loader = loaders.aegisTxProduct
   else if (path === '/configurator') loader = loaders.configurator
   else if (path === '/configurator/fc') loader = loaders.fcConfigurator
   else if (path === '/configurator/controller') loader = loaders.controllerConfigurator
   else if (path.startsWith('/configurator/')) loader = loaders.plannedModule
   else if (path === '/docs') loader = loaders.docs
-  else if (path === '/docs/aegis-fc') loader = loaders.aegisFcDocs
-  else if (path === '/docs/aegis-tx') loader = loaders.aegisTxDocs
+  else if ((path === '/docs/aegis-fc' || path === '/docs/fc')) loader = loaders.aegisFcDocs
+  else if ((path === '/docs/aegis-tx' || path === '/docs/controller')) loader = loaders.aegisTxDocs
   else if (path === '/about') loader = loaders.about
 
   if (loader && !loadedRoutes.has(path)) {

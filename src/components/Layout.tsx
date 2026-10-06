@@ -61,9 +61,7 @@ export function Layout() {
 
   return (
     <div className="layout-container">
-      <div className="navbar-wrapper">
-        <Navbar />
-      </div>
+      <Navbar />
 
       <main className="main-content">
         <Suspense fallback={<RouteFallback />}>

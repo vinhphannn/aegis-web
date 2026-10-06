@@ -75,7 +75,7 @@ export function ControllerInstaller({ release }: { release: ControllerRelease })
       </p>
       <label className="config-check">
         <input type="checkbox" checked={boardConfirmed} onChange={event => setBoardConfirmed(event.target.checked)} />
-        <span>My device is AEGIS TX with ESP32, hardware revision TX01. Chip detection alone cannot identify the board.</span>
+        <span>My device is the AEGIS Controller with ESP32, hardware revision TX01. Chip detection alone cannot identify the board.</span>
       </label>
       {release.channel === 'beta' && <label className="config-check">
         <input type="checkbox" checked={betaConfirmed} onChange={event => setBetaConfirmed(event.target.checked)} />

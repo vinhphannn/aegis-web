@@ -36,7 +36,7 @@ The Configurator uses the existing React/TypeScript and CSS conventions. All int
 | --- | --- | --- |
 | `/configurator` | `ConfiguratorPage` | Device hub; no firmware requests |
 | `/configurator/fc` | `FcConfiguratorPage` | Channel/version selection, `.px4` download, QGroundControl guidance; PX4-Autopilot releases |
-| `/configurator/controller` | `ControllerConfiguratorPage` | Handheld AEGIS TX selection, ZIP download, verified USB installer; Aegis-TX releases |
+| `/configurator/controller` | `ControllerConfiguratorPage` | Handheld AEGIS Controller selection, ZIP download, verified USB installer; Aegis-TX releases |
 | `/configurator/tx-module` | `PlannedModulePage` | Planned; no configuration or installer |
 | `/configurator/rx-module` | `PlannedModulePage` | Planned; no configuration or installer |
 
@@ -59,7 +59,7 @@ npm test
 
 Browser tests use mock release data and never open a real USB port. They cover all five routes (direct access and refresh), hub navigation, back/forward, independent device selection, stable/beta releases, downloads, future module states, checksum failures, hardware confirmation and cancellation on navigation. Real USB flashing, progress/completion on hardware and data retention require a device test. CI uses Node from `.nvmrc` and runs build/tests on PRs; only `main` deploys.
 
-GitHub Pages has no SPA rewrites. `scripts/route-entries.mjs` copies the built entry HTML to existing route directories so direct links and refresh work; add a path there when adding a public route. The 3D home page is loaded only when visited, keeping it out of Configurator's initial download.
+GitHub Pages has no SPA rewrites. `scripts/route-entries.mjs` copies the built entry HTML to existing route directories so direct links and refresh work; add a path there when adding a public route. 3D scene bundles are lazy-loaded by Home and About. Product and documentation pages use lightweight diagrams. Public product/documentation routes are `/products/fc`, `/products/controller`, `/docs/fc`, and `/docs/controller`; previous `aegis-fc`/`aegis-tx` URLs redirect to these routes.
 
 ## 3D Asset Attribution
 

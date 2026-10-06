@@ -16,10 +16,10 @@ export function DocsPage() {
 
       <ul className="placeholder-list">
         <li>
-          <Link to="/docs/aegis-fc">AEGIS FC Documentation</Link>
+          <Link to="/docs/fc">AEGIS FC Documentation</Link>
         </li>
         <li>
-          <Link to="/docs/aegis-tx">AEGIS TX Documentation</Link>
+          <Link to="/docs/controller">AEGIS Controller Documentation</Link>
         </li>
       </ul>
     </div>

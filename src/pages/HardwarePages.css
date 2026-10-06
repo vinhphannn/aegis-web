@@ -1,0 +1,33 @@
+.home-hub .hero-headline { font-size: clamp(32px,3.6vw,58px); max-width: 670px; }
+.home-visual-caption { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); white-space: nowrap; color: var(--text-secondary); font: 10px var(--font-mono); letter-spacing: .08em; }
+.hub-section { width: 100%; padding: 70px 4vw; border-top: 1px solid var(--border-subtle); }
+.hub-section > h2 { font-size: clamp(28px,3vw,42px); font-weight: 500; letter-spacing: -.035em; margin: 22px 0 32px; }
+.hardware-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+.hardware-card { border: 1px solid var(--border-subtle); border-radius: 12px; padding: 32px; background: linear-gradient(140deg,#10172180,#07090e); }
+.hardware-card-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--text-secondary); font-size: 12px; }
+.hardware-status { font: 9px var(--font-mono); letter-spacing: .09em; color: var(--accent-blue); line-height: 1.6; }
+.hardware-card h3 { font-size: 28px; font-weight: 500; margin: 30px 0 14px; }
+.hardware-card p { color: var(--text-secondary); font-size: 15px; line-height: 1.8; max-width: 470px; margin-bottom: 24px; }
+.proof-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 32px; margin-bottom: 32px; }
+.proof-grid h3 { font-size: 16px; font-weight: 500; margin-bottom: 12px; }
+.proof-grid p { color: var(--text-secondary); font-size: 13px; line-height: 1.8; }
+.hardware-detail { max-width: 1200px; margin: auto; padding-top: 120px; }
+.hardware-detail p, .hardware-detail li { color: var(--text-secondary); line-height: 1.8; }
+.hardware-detail h2 { font-size: 22px; font-weight: 500; margin: 10px 0 18px; }
+.hardware-detail ul, .hardware-detail ol { padding-left: 22px; }
+.hardware-detail li + li { margin-top: 10px; }
+.hardware-detail section { padding: 28px 0; border-top: 1px solid var(--border-subtle); }
+.hardware-detail-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+.hardware-diagram { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px; min-height: 170px; padding: 28px; background: radial-gradient(ellipse at center,#38bdf80c,transparent 75%); border: 1px solid var(--border-subtle); border-radius: 12px; }
+.hardware-diagram span { font: 12px var(--font-mono); color: var(--text-secondary); }
+.hardware-diagram strong { color: var(--text-primary); font: 18px var(--font-mono); }
+.hardware-detail .text-link { display: inline-block; margin-top: 16px; }
+.hardware-note { font-size: 13px; }
+@media (max-width: 700px) {
+  .hub-section { padding: 48px 24px; }
+  .hardware-grid, .proof-grid { grid-template-columns: 1fr; }
+  .proof-grid { gap: 22px; }
+  .hardware-card { padding: 24px; }
+  .hardware-detail { padding-top: 110px; }
+  .home-hub .hero-visual { margin-bottom: 20px; }
+}
