@@ -30,7 +30,7 @@ async function confirm(page: Page) {
 }
 
 const routes = [
-  ['configurator/', 'Configurator'],
+  ['configurator/', 'Choose your device.'],
   ['configurator/fc/', 'AEGIS FC'],
   ['configurator/controller/', 'AEGIS Controller'],
   ['configurator/tx-module/', 'AEGIS TX Module'],

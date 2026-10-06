@@ -167,34 +167,24 @@
   font-size: 0.85rem;
 }
 
-.config-devices {
-  list-style: none;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.config-devices a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.4rem 0;
-  border-bottom: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.config-devices a > span:first-child {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.config-devices strong {
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.config-devices a:hover strong {
-  color: var(--accent-blue);
-}
+.config-device-hub { max-width: 1280px; margin-inline: auto; }
+.config-device-hub .page-header { margin-bottom: 1rem; align-items: center; text-align: center; }
+.config-device-hub h1 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -.035em; }
+.config-devices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; list-style: none; padding: 0; margin: 0; }
+.config-device-card { display: flex; flex-direction: column; height: 100%; padding: 1.75rem; border: 1px solid var(--border-subtle); border-radius: 16px; background: linear-gradient(135deg, rgba(56,189,248,.045), rgba(255,255,255,.015)); color: var(--text-primary); text-decoration: none; transition: border-color .2s, background .2s, transform .2s; }
+.config-device-card:hover { border-color: rgba(56,189,248,.45); background: rgba(56,189,248,.065); transform: translateY(-3px); }
+.config-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+.config-device-icon { display: grid; place-items: center; width: 64px; height: 64px; color: var(--accent-blue); background: rgba(56,189,248,.065); border: 1px solid rgba(56,189,248,.12); border-radius: 14px; }
+.config-device-icon svg { width: 48px; height: 48px; }
+.config-card-copy { display: flex; flex-direction: column; gap: .5rem; }
+.config-device-role { color: var(--text-secondary); font: 10px var(--font-mono); text-transform: uppercase; letter-spacing: .14em; }
+.config-card-copy strong { font-size: 1.4rem; font-weight: 600; letter-spacing: -.025em; }
+.config-device-detail { color: var(--text-secondary); font-size: .9rem; line-height: 1.6; }
+.config-card-action { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); margin-top: 1.75rem; padding-top: 1rem; font-size: .85rem; }
+.config-card-action > span { color: var(--accent-blue); font-size: 1.2rem; }
+.config-planned-badge { padding: .35rem .6rem; border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-secondary); font: 10px var(--font-mono); letter-spacing: .04em; }
+.config-device-card.is-planned { background: rgba(255,255,255,.012); }
+.is-planned .config-device-icon { color: var(--text-secondary); background: rgba(255,255,255,.025); border-color: var(--border-subtle); }
+.is-planned .config-card-action { color: var(--text-secondary); }
+@media (max-width: 600px) { .config-devices { grid-template-columns: 1fr; gap: 1rem; } .config-device-card { padding: 1.4rem; } }
+@media (prefers-reduced-motion: reduce) { .config-device-card { transition: none; } .config-device-card:hover { transform: none; } }

@@ -31,6 +31,16 @@ export function AboutPage() {
   const revealed = minimumWait && ((modelsReady && imageReady) || timedOut)
 
   useEffect(() => {
+    const root = rootRef.current!
+    const section = root.querySelectorAll<HTMLElement>('.about-chapter')[active]
+    const update = () => root.style.setProperty('--mobile-model-top', `${section.offsetTop + section.offsetHeight - 310}px`)
+    const observer = new ResizeObserver(update)
+    observer.observe(section)
+    update()
+    return () => observer.disconnect()
+  }, [active])
+
+  useEffect(() => {
     let cancelled = false
     const image = new Image()
     image.src = `${assetRoot}${chapters[0].image}.webp`

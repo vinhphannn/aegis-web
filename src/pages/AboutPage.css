@@ -97,3 +97,11 @@ html.about-scene-loading { overflow: hidden; }
 .about-fc-drag-hint { position: fixed; left: 74%; top: 83%; transform: translateX(-50%); z-index: 4; color: var(--text-secondary); font: 10px var(--font-mono); pointer-events: none; }
 @media (max-width: 820px) { .about-fc-drag-hint { left: auto; right: 30px; top: auto; bottom: 14px; transform: none; font-size: 9px; } }
 @media (max-height: 650px) { .about-fc-drag-hint { display: none; } }
+
+/* Mobile models occupy a reserved slot below copy, scrolling with the chapter. */
+@media (max-width: 820px) and (min-height: 651px) {
+  .about-chapter { justify-content: flex-start; padding: 110px 48px 340px 24px; }
+  .about-near-plane { position: absolute; inset: auto 0 auto; top: var(--mobile-model-top, 530px); height: 280px; }
+  .about-model-parallax, .aegis-about[data-chapter="3"] .about-model-parallax { transform: none; }
+  .about-fc-drag-hint { position: absolute; top: calc(var(--mobile-model-top, 530px) + 265px); bottom: auto; right: 24px; }
+}

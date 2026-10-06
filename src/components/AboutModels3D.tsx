@@ -1,7 +1,7 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
-import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
+import { Canvas, events, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import { Group, MathUtils, Quaternion, Euler } from 'three'
+import { Group, Mesh, MeshStandardMaterial, MathUtils, Quaternion, Euler } from 'three'
 
 import { prepareModel } from '../lib/prepareModel'
 
@@ -49,7 +49,35 @@ export function Model({ kind, chapter, reduced, onReady, hero = false }: { kind:
   // GLTFs are cached across Home and About. Clone the hierarchy so poses never
   // reparent or mutate Home's model; retain shared geometry and materials.
   const normalized = useMemo(() => {
-    return prepareModel(scene, kind === 'fc')
+    const model = prepareModel(scene, kind === 'fc')
+    // Add a soft fill and edge light only to cloned drone materials.
+    if (kind === 'drone') {
+      const materials = new Map<MeshStandardMaterial, MeshStandardMaterial>()
+      model.scene.traverse(node => {
+        if (!(node instanceof Mesh)) return
+        if (!(node.material instanceof MeshStandardMaterial)) return
+        let material = materials.get(node.material)
+        if (!material) {
+          material = node.material.clone()
+          material.metalness = .25
+          material.roughness = .65
+          material.onBeforeCompile = shader => {
+            shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+              float softKey = max(dot(normal, normalize(vec3(-0.3, 0.6, 1.0))), 0.0);
+              float edgeLight = pow(1.0 - abs(dot(normal, vec3(0.0, 0.0, 1.0))), 3.0);
+              outgoingLight += diffuseColor.rgb * (0.8 + softKey * 1.8);
+              outgoingLight += vec3(0.10, 0.14, 0.17) * edgeLight;
+              #include <opaque_fragment>
+            `)
+          }
+          material.customProgramCacheKey = () => 'aegis-drone-soft-fill-v1'
+          materials.set(node.material, material)
+          model.ownedMaterials.push(material)
+        }
+        node.material = material
+      })
+    }
+    return model
   }, [scene, kind])
 
   useEffect(() => () => { normalized.owned.forEach(geometry => geometry.dispose()); normalized.ownedMaterials.forEach(material => material.dispose()) }, [normalized])
@@ -125,17 +153,18 @@ export function Model({ kind, chapter, reduced, onReady, hero = false }: { kind:
     const object = group.current
     if (!object) return
     const mobile = viewport.width < 8.2
+    const inlineMobile = mobile && viewport.height < 4
     const featured = kind === 'fc' && chapter === 2
     const showDrone = kind === 'drone' && chapter !== 2
     const chapterTwoDrone = kind === 'drone' && chapter === 1
     const width = kind === 'drone'
       ? viewport.width * (mobile ? .82 : .46)
       : viewport.width * (featured ? (mobile ? .6 : .34) : (mobile ? .42 : .2))
-    const x = hero && mobile ? 0 : viewport.width * (kind === 'drone' ? ABOUT_DRONE.positionX + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetX : 0) : featured ? (mobile ? .30 : .24) : -.44)
-    const y = viewport.height * (kind === 'drone' ? ABOUT_DRONE.positionY + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetY : 0) : featured ? (mobile ? -.32 : -.04) : -.46)
-    const baseScale = kind === 'drone' && !showDrone ? 0 : Math.min(width, kind === 'drone' ? 6.8 : 6) * (chapterTwoDrone ? CHAPTER_TWO_DRONE.scaleMultiplier : 1)
+    const x = inlineMobile || (hero && mobile) ? 0 : viewport.width * (kind === 'drone' ? ABOUT_DRONE.positionX + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetX : 0) : featured ? (mobile ? .30 : .24) : -.44)
+    const y = inlineMobile || (hero && mobile) ? 0 : viewport.height * (kind === 'drone' ? ABOUT_DRONE.positionY + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetY : 0) : featured ? (mobile ? -.32 : -.04) : -.46)
+    const baseScale = (kind === 'drone' && !showDrone) || (inlineMobile && kind === 'fc' && !featured) ? 0 : Math.min(width, kind === 'drone' ? 6.8 : 6) * (chapterTwoDrone ? CHAPTER_TWO_DRONE.scaleMultiplier : 1)
     // Reserve enough room for the board's bounding sphere at any drag angle.
-    const scale = hero ? Math.min(baseScale, (viewport.width / 2 - Math.abs(x)) * .95 / normalized.radius, (viewport.height / 2 - Math.abs(y)) * .95 / normalized.radius) : baseScale
+    const scale = hero || inlineMobile ? Math.min(baseScale, (viewport.width / 2 - Math.abs(x)) * .95 / normalized.radius, (viewport.height / 2 - Math.abs(y)) * .95 / normalized.radius) : baseScale
     const pointerStrength = kind === 'drone' ? ABOUT_DRONE.pointerStrength : featured ? 0 : 1
     const angle = new Euler(
       (kind === 'drone' ? MathUtils.degToRad(ABOUT_DRONE.tiltX) : .65) - pointer.current.y * .1 * pointerStrength,
@@ -201,7 +230,11 @@ export function AboutModels3D({ chapter, onPrepared, eventRoot }: { chapter: num
     <div className="about-model-parallax" data-models-ready={!!ready.drone && !!ready.fc}>
       {enabled && (
         <ModelBoundary onUnavailable={onPrepared}>
-          <Canvas eventSource={eventRoot} eventPrefix="client" orthographic camera={{ position: [0, 0, 12], zoom: 100, near: .1, far: 100 }} dpr={[1, 1.5]} frameloop="demand" gl={{ alpha: true, antialias: true }} style={{ pointerEvents: 'none' }}>
+          <Canvas eventSource={eventRoot} events={state => ({ ...events(state), compute: (event, state) => {
+            const rect = state.gl.domElement.getBoundingClientRect()
+            state.pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1)
+            state.raycaster.setFromCamera(state.pointer, state.camera)
+          } })} orthographic camera={{ position: [0, 0, 12], zoom: 100, near: .1, far: 100 }} dpr={[1, 1.5]} frameloop="demand" gl={{ alpha: true, antialias: true }} style={{ pointerEvents: 'none' }}>
             <ambientLight intensity={2.1} />
             <directionalLight position={[2, 8, 8]} intensity={3} color="#ffffff" />
             <directionalLight position={[-8, 5, 6]} intensity={1.5} color="#d6eaff" />
