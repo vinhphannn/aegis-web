@@ -1,5 +1,5 @@
-import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
+import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { Box3, Group, MathUtils, Quaternion, Euler, Vector3, Mesh, type BufferGeometry, type Material } from 'three'
 
@@ -39,6 +39,8 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
   const group = useRef<Group>(null)
   const firstFrame = useRef(false)
   const readyFrame = useRef(0)
+  const dragRotation = useRef(new Quaternion())
+  const drag = useRef<{ id: number; x: number; y: number; target: { releasePointerCapture: (id: number) => void } } | null>(null)
   const pointer = useRef({ x: 0, y: 0 })
   const targetRotation = useMemo(() => new Quaternion(), [])
   // GLTFs are cached across Home and About. Clone the hierarchy so poses never
@@ -94,7 +96,49 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
       document.documentElement.removeEventListener('pointerleave', reset)
     }
   }, [reduced, invalidate])
-  useEffect(() => { invalidate() }, [chapter, reduced, invalidate])
+  useEffect(() => {
+    dragRotation.current.identity()
+    drag.current?.target.releasePointerCapture(drag.current.id)
+    drag.current = null
+    invalidate()
+  }, [chapter, reduced, invalidate])
+
+  useEffect(() => {
+    const cancel = () => {
+      const current = drag.current
+      drag.current = null
+      if (current) { try { current.target.releasePointerCapture(current.id) } catch { /* Already released by the browser. */ } }
+    }
+    window.addEventListener('blur', cancel)
+    window.addEventListener('pointercancel', cancel)
+    return () => { cancel(); window.removeEventListener('blur', cancel); window.removeEventListener('pointercancel', cancel) }
+  }, [])
+
+  const startDrag = (event: ThreeEvent<PointerEvent>) => {
+    if (kind !== 'fc' || chapter !== 2 || event.button !== 0) return
+    event.stopPropagation()
+    event.nativeEvent.preventDefault()
+    const target = event.target as unknown as { setPointerCapture: (id: number) => void; releasePointerCapture: (id: number) => void }
+    target.setPointerCapture(event.pointerId)
+    drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, target }
+  }
+  const rotateDrag = (event: ThreeEvent<PointerEvent>) => {
+    const previous = drag.current
+    if (!previous || previous.id !== event.pointerId) return
+    event.stopPropagation()
+    event.nativeEvent.preventDefault()
+    const rotation = new Quaternion().setFromEuler(new Euler((event.clientY - previous.y) * .008, (event.clientX - previous.x) * .008, 0))
+    dragRotation.current.premultiply(rotation)
+    previous.x = event.clientX
+    previous.y = event.clientY
+    invalidate()
+  }
+  const stopDrag = (event: ThreeEvent<PointerEvent>) => {
+    if (drag.current?.id !== event.pointerId) return
+    event.stopPropagation()
+    drag.current.target.releasePointerCapture(event.pointerId)
+    drag.current = null
+  }
 
   useFrame((_, delta) => {
     const object = group.current
@@ -109,13 +153,14 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
     const x = viewport.width * (kind === 'drone' ? ABOUT_DRONE.positionX + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetX : 0) : featured ? (mobile ? .30 : .24) : -.44)
     const y = viewport.height * (kind === 'drone' ? ABOUT_DRONE.positionY + (chapterTwoDrone ? CHAPTER_TWO_DRONE.offsetY : 0) : featured ? (mobile ? -.32 : -.04) : -.46)
     const scale = kind === 'drone' && !showDrone ? 0 : Math.min(width, kind === 'drone' ? 6.8 : 6) * (chapterTwoDrone ? CHAPTER_TWO_DRONE.scaleMultiplier : 1)
-    const pointerStrength = kind === 'drone' ? ABOUT_DRONE.pointerStrength : 1
+    const pointerStrength = kind === 'drone' ? ABOUT_DRONE.pointerStrength : featured ? 0 : 1
     const angle = new Euler(
       (kind === 'drone' ? MathUtils.degToRad(ABOUT_DRONE.tiltX) : .65) - pointer.current.y * .1 * pointerStrength,
       (kind === 'drone' ? MathUtils.degToRad(ABOUT_DRONE.yawY + chapter * ABOUT_DRONE.chapterYaw) : -.35 + (chapter - 1) * .04) + pointer.current.x * .16 * pointerStrength,
       (kind === 'drone' ? MathUtils.degToRad(ABOUT_DRONE.rollZ) : .2) + pointer.current.x * .025 * pointerStrength,
     )
     targetRotation.setFromEuler(angle)
+    if (featured) targetRotation.premultiply(dragRotation.current)
     const initial = !firstFrame.current
     const ease = reduced || initial ? 1 : 1 - Math.exp(-Math.min(delta, .2) * 8)
     object.position.x = MathUtils.lerp(object.position.x, x, ease)
@@ -127,13 +172,19 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
       // Notify after the renderer has drawn the initial pose, not just fetched GLTF.
       readyFrame.current = requestAnimationFrame(() => onReady(kind))
     }
-    if (Math.abs(object.position.x - x) + Math.abs(object.position.y - y) + Math.abs(object.scale.x - scale) + object.quaternion.angleTo(targetRotation) > .002) invalidate()
+    const pending = Math.abs(object.position.x - x) + Math.abs(object.position.y - y) + Math.abs(object.scale.x - scale) + object.quaternion.angleTo(targetRotation)
+    if (pending > .002) invalidate()
+    else if (featured) {
+      object.position.set(x, y, 0)
+      object.scale.setScalar(scale)
+      object.quaternion.copy(targetRotation)
+    }
   })
 
-  return <group ref={group} scale={0} dispose={null}><group scale={normalized.scale}><primitive object={normalized.scene} dispose={null} /></group></group>
+  return <group ref={group} scale={0} dispose={null} onPointerDown={startDrag} onPointerMove={rotateDrag} onPointerUp={stopDrag}><group scale={normalized.scale}><primitive object={normalized.scene} dispose={null} /></group></group>
 }
 
-export function AboutModels3D({ chapter, onPrepared }: { chapter: number; onPrepared: () => void }) {
+export function AboutModels3D({ chapter, onPrepared, eventRoot }: { chapter: number; onPrepared: () => void; eventRoot: RefObject<HTMLDivElement | null> }) {
   const [enabled, setEnabled] = useState(false)
   const [reduced, setReduced] = useState(false)
   const [ready, setReady] = useState<Partial<Record<ModelKind, boolean>>>({})
@@ -160,7 +211,7 @@ export function AboutModels3D({ chapter, onPrepared }: { chapter: number; onPrep
     <div className="about-model-parallax" data-models-ready={!!ready.drone && !!ready.fc}>
       {enabled && (
         <ModelBoundary onUnavailable={onPrepared}>
-          <Canvas orthographic camera={{ position: [0, 0, 12], zoom: 100, near: .1, far: 100 }} dpr={[1, 1.5]} frameloop="demand" gl={{ alpha: true, antialias: true }} style={{ pointerEvents: 'none' }}>
+          <Canvas eventSource={eventRoot} eventPrefix="client" orthographic camera={{ position: [0, 0, 12], zoom: 100, near: .1, far: 100 }} dpr={[1, 1.5]} frameloop="demand" gl={{ alpha: true, antialias: true }} style={{ pointerEvents: 'none' }}>
             <ambientLight intensity={2.1} />
             <directionalLight position={[2, 8, 8]} intensity={3} color="#ffffff" />
             <directionalLight position={[-8, 5, 6]} intensity={1.5} color="#d6eaff" />

@@ -152,7 +152,7 @@ export function AboutPage() {
         <div className="about-scene-scrim" />
       </div>
       <div className="about-near-plane" aria-hidden="true">
-        <Suspense fallback={null}><AboutModels3D chapter={active} onPrepared={onPrepared} /></Suspense>
+        <Suspense fallback={null}><AboutModels3D chapter={active} onPrepared={onPrepared} eventRoot={rootRef} /></Suspense>
       </div>
 
       <section inert={!revealed} className={`about-chapter about-hero${active === 0 ? ' is-active' : ''}`} id="about-intro" aria-labelledby="about-title">
@@ -204,6 +204,7 @@ export function AboutPage() {
         </div>
       </section>
 
+      {active === 2 && revealed && <span className="about-fc-drag-hint">Drag the board to rotate</span>}
       <nav inert={!revealed} className="about-chapter-rail" aria-label="About chapters">
         <span className="about-chapter-count" aria-hidden="true">0{active + 1} / 04</span>
         {chapters.map((chapter, index) => (
