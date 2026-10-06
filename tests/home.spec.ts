@@ -42,3 +42,28 @@ test('Home and product copy fit mobile without overflowing', async ({ page }) =>
   await expect(page.locator('.boot-loader')).toHaveCount(0)
   await page.screenshot({ path: '/tmp/aegis-home-desktop.png', fullPage: true })
 })
+
+test('Home uses FC only and rotates through dragging rather than pointer focus', async ({ page }) => {
+  const models: string[] = []
+  page.on('request', request => { if (request.url().endsWith('.glb')) models.push(request.url()) })
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.goto('./')
+  await expect(page.locator('.home-fc-viewer')).toHaveAttribute('data-model-ready', 'true', { timeout: 30000 })
+  await expect(page.locator('.boot-loader')).toHaveCount(0)
+  await page.waitForTimeout(500)
+  const canvas = page.locator('.home-fc-viewer canvas')
+  const before = await canvas.screenshot()
+  const box = (await canvas.boundingBox())!
+  const x = box.x + box.width / 2, y = box.y + box.height / 2
+  await page.mouse.move(x, y)
+  await page.waitForTimeout(300)
+  expect(await canvas.screenshot()).toEqual(before)
+  await page.mouse.down()
+  await page.mouse.move(x + 120, y - 70, { steps: 10 })
+  await page.mouse.up()
+  await page.waitForTimeout(1000)
+  expect(await canvas.screenshot()).not.toEqual(before)
+  expect(models.map(url => url.split('/').at(-1))).toEqual(['aegis-fc.glb'])
+  expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('')
+  await page.screenshot({ path: '/tmp/aegis-home-fc.png', fullPage: true })
+})

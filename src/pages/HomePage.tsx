@@ -20,8 +20,8 @@ export function HomePage() {
         </div>
         <div className="hero-visual">
           <div className="hero-bg-glow" />
-          <HeroScene3D desktopCameraZ={5.2} />
-          <span className="home-visual-caption">UAV system context / illustration</span>
+          <HeroScene3D />
+          <span className="home-visual-caption">AEGIS FC / drag to rotate</span>
         </div>
       </section>
       <section className="hub-section" aria-labelledby="current-hardware-title">

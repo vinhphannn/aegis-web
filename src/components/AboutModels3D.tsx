@@ -1,9 +1,9 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import { Box3, Group, MathUtils, Quaternion, Euler, Vector3, Mesh, type BufferGeometry, type Material } from 'three'
+import { Group, MathUtils, Quaternion, Euler } from 'three'
 
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
+import { prepareModel } from '../lib/prepareModel'
 
 const modelRoot = `${import.meta.env.BASE_URL}models/`
 type ModelKind = 'drone' | 'fc'
@@ -46,36 +46,7 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
   // GLTFs are cached across Home and About. Clone the hierarchy so poses never
   // reparent or mutate Home's model; retain shared geometry and materials.
   const normalized = useMemo(() => {
-    let clone = scene.clone(true)
-    const owned: BufferGeometry[] = []
-    // The CAD FC contains thousands of static mesh primitives. Batch them by
-    // material in world space while preserving its exact shapes and materials.
-    // These new buffers belong to About; never dispose cached GLTF resources.
-    if (kind === 'fc') {
-      clone.updateMatrixWorld(true)
-      const batches = new Map<string, { material: Material; geometries: BufferGeometry[] }>()
-      clone.traverse(node => {
-        if (!(node instanceof Mesh) || Array.isArray(node.material)) return
-        const geometry = node.geometry.clone().applyMatrix4(node.matrixWorld)
-        const key = `${node.material.uuid}:${Object.keys(geometry.attributes).sort().join(',')}:${!!geometry.index}`
-        const batch: { material: Material; geometries: BufferGeometry[] } = batches.get(key) ?? { material: node.material, geometries: [] }
-        batch.geometries.push(geometry)
-        batches.set(key, batch)
-      })
-      const batched = new Group()
-      for (const batch of batches.values()) {
-        const merged = mergeGeometries(batch.geometries)
-        if (merged) { owned.push(merged); batched.add(new Mesh(merged, batch.material)) }
-        else { batch.geometries.forEach(geometry => { owned.push(geometry); batched.add(new Mesh(geometry, batch.material)) }) }
-        if (merged) batch.geometries.forEach(geometry => geometry.dispose())
-      }
-      if (batched.children.length) clone = batched
-    }
-    const bounds = new Box3().setFromObject(clone)
-    const size = bounds.getSize(new Vector3())
-    const center = bounds.getCenter(new Vector3())
-    clone.position.sub(center)
-    return { scene: clone, scale: 1 / Math.max(size.x, size.y, size.z, .001), owned }
+    return prepareModel(scene, kind === 'fc')
   }, [scene, kind])
 
   useEffect(() => () => normalized.owned.forEach(geometry => geometry.dispose()), [normalized])
@@ -118,6 +89,7 @@ function Model({ kind, chapter, reduced, onReady }: { kind: ModelKind; chapter: 
     if (kind !== 'fc' || chapter !== 2 || event.button !== 0) return
     event.stopPropagation()
     event.nativeEvent.preventDefault()
+    window.getSelection()?.removeAllRanges()
     const target = event.target as unknown as { setPointerCapture: (id: number) => void; releasePointerCapture: (id: number) => void }
     target.setPointerCapture(event.pointerId)
     drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, target }

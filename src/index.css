@@ -46,3 +46,19 @@ body {
   width: 100%;
   min-height: 100vh;
 }
+
+/* Pointer gestures operate the interface and 3D scenes without selecting copy. */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+/* Keep editable values and technical references usable. */
+input, textarea, [contenteditable="true"], [contenteditable=""],
+code, pre, [data-selectable], [data-selectable] * {
+  -webkit-user-select: text;
+  user-select: text;
+}

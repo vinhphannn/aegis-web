@@ -29,6 +29,8 @@ test('only chapter 3 FC rotates on drag and keeps its angle after release', asyn
   await page.mouse.down()
   await page.mouse.move(1160, 490, { steps: 10 })
   await page.mouse.up()
+  expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('')
+  await expect(page.locator('#about-foundations h2')).toHaveCSS('user-select', 'none')
   await page.waitForTimeout(1000)
   const rotated = await snapshot()
   expect(await difference(before, rotated)).toBeGreaterThan(.005)
